@@ -14,8 +14,8 @@ data = pd.read_csv('../data/train.csv')
 y = data['target']
 X = data.drop(['ID_code', 'target'], axis=1)
 
-X_train, X_test, y_train, y_test = split(
-    X, y, test_size=0.25, stratify=y, random_state=rand_state)
+#X_train, X_test, y_train, y_test = split(
+#    X, y, test_size=0.25, stratify=y, random_state=rand_state)
 
 # 3*5*3*3*4=540
 params = {
@@ -38,13 +38,13 @@ kfold = StratifiedKFold(n_splits=folds, shuffle=True, random_state=rand_state)
 search = RandomizedSearchCV(
     model, param_distributions=params, 
     n_iter=param_combinations, scoring='roc_auc',
-    n_jobs=4, cv=kfold.split(X_train, y_train), 
-    verbose=3, random_state=rand_state
+    n_jobs=4, cv=kfold.split(X, y), 
+    verbose=4, random_state=rand_state
 )
 
 start_time = util.timer(None)
-search.fit(X_train, y_train)
-timer(start_time)
+search.fit(X, y)
+util.timer(start_time)
 
 results = pd.DataFrame(search.cv_results_)
 results.to_csv('xgb-boost-param-search-res.csv', index=False)
